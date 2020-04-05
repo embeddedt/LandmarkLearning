@@ -1,0 +1,300 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+}
+
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+}
+
+html, body, #game-container {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    overscroll-behavior: none;
+}
+
+.evidence-image {
+    max-width: 10rem;
+}
+
+.body,
+.wrapper {
+    /* Break the flow */
+    position: absolute;
+    top: 0px;
+
+    /* Give them all the available space */
+    width: 100%;
+    height: 100%;
+
+    /* Remove the margins if any */
+    margin: 0;
+
+    /* Allow them to scroll down the document */
+    overflow: hidden;
+}
+
+.body {
+    /* Sending body at the bottom of the stack */
+    z-index: 1;
+}
+
+.wrapper {
+    /* Making the wrapper stack above the body */
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: flex-start;
+}
+
+#card-container {
+    display: none;
+    flex-direction: column;
+    /* width: 80vw; */
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 0;
+    background-color: black;
+}
+
+.choices-made #card-container {
+    display: flex;
+}
+
+#sidebar::-webkit-scrollbar {
+    z-index: -1;
+    position: relative;
+}
+#sidebar {
+    /* width: calc(100% - 80vw); */
+    flex: none;
+    /*
+    position: fixed;
+    top: 0;
+    left: 0;
+    */
+    height: 100%;
+    z-index: 1;
+    background: rgba(128, 128, 128, 0.5);
+    overflow: visible;
+    display: none;
+}
+
+.choices-made #sidebar {
+    display: block;
+}
+
+#sidebar, #card-container {
+    transition: transform 0.5s;
+}
+
+
+.game-finished #sidebar {
+    transform: translateX(-100%);
+}
+
+.sidebar-cards {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: visible;
+    overflow-y: scroll;
+}
+
+.card-backface img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+#card-container > img {
+    visibility: hidden;
+}
+#card-container > img, .card-backface img {
+    /* max-width: 80vw; */ /* overriden in JS */
+    max-height: 100vh;
+}
+
+#card-container > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-row {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+}
+.card {
+    background: lightblue;
+    border: 4px black solid;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    line-height: normal;
+    text-align: center;
+    font-size: 2rem;
+    user-select: none;
+    transform: rotateY(180deg); /* EP-change, 0deg before */
+    transform-style: preserve-3d;
+    transition: transform 0.5s linear, box-shadow 0.1s linear;
+    position: relative;
+    overflow: hidden;
+}
+
+.draggable-wrapper.card-dropped {
+    z-index: 1 !important; 
+}
+.draggable-wrapper.card-dropped .card {
+    transform: rotateY(180deg);
+}
+.draggable-wrapper.card-dropped.card-clicked .card {
+    transform: rotateY(180deg); /* EP-change, 0deg before */
+}
+
+.card-wrong .card {
+    border-color: red;
+}
+
+.draggable-wrapper.card-clicked {
+    will-change: transform;
+}
+
+@media screen and (max-width: 950px) {
+    .card {
+        font-size: 1rem;
+    }
+}
+
+.keyname {
+    font-size: 150%;
+    font-weight: bold;
+}
+
+.card-row .card {
+    flex: 1 1 auto;
+}
+
+.card-row .card svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.sidebar-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(100%, -50%);
+    height: 3rem;
+}
+
+.draggable-wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    filter: blur(0px);
+    flex: none;
+    touch-action: none
+}
+
+.draggable-wrapper .card {
+    width: 100%;
+    height: 100%;
+}
+
+.card-backface {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(180deg);
+    overflow: hidden;
+}
+
+.draggable-wrapper.card-appear-floating .card {
+    box-shadow: 0px 0px 1rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+@keyframes play-bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#play-again {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    background-color: green;
+    border-top-left-radius: 1rem;
+    padding: 1rem;
+    text-decoration: underline;
+    color: lightblue;
+    font-size: 1.5rem;
+    display: none;
+    border: none;
+    cursor: pointer;
+    transform-origin: bottom right;
+    animation: play-bounce 0.75s ease;
+    animation-iteration-count: 2;
+}
+
+body .swal2-popup {
+    padding: 1.25rem;
+}
+.swal2-validation-message.swal2-funfact-message {
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    display: flex;
+    margin-top: 1.25rem;
+}
+.swal2-validation-message.swal2-funfact-message::before {
+    background-color: #74c274;
+    content: "i";
+}
